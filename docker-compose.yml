@@ -1,0 +1,78 @@
+version: "3"
+
+networks:
+  monitoring:
+  app:
+
+services:
+  postgres-exporter:
+    image: wrouesnel/postgres_exporter:latest
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:password@postgres:5432/postgres?sslmode=disable"
+    networks:
+      - app 
+      - monitoring 
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+      PGDATA: /tmp
+    volumes:
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    networks:
+      - app
+    deploy:
+      resources:
+        limits:
+          cpus: '0.001'
+          memory: 50M
+        reservations:
+          cpus: '0.001'
+          memory: 20M
+  pg-admin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: "pw"
+      PGADMIN_DEFAULT_EMAIL: "admin@email.com"
+    depends_on:
+      - postgres
+    ports:
+      - "8080:80"
+    networks:
+      - app
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - monitoring
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - monitoring

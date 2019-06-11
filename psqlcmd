@@ -1,0 +1,11 @@
+CREATE TABLE test(
+   id serial PRIMARY KEY,
+   col1 VARCHAR (50) NOT NULL
+);
+
+INSERT INTO test (col1) VALUES ('value');
+
+INSERT INTO test (col1) 
+SELECT g.id
+FROM generate_series(1, 10000000000000000) AS g (id);
+
