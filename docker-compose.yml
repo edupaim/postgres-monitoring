@@ -20,9 +20,15 @@ services:
     image: postgres:latest
     ports:
       - "5432:5432"
+    command:
+      - "-c"
+      - "config_file=/psql/data/postgresql.conf"
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: db
+    volumes:
+      - ./postgresql.conf:/psql/data/postgresql.conf
+      - ./psql/log:/var/lib/postgresql/data/log
     networks:
       - app
   logstash:
