@@ -1,0 +1,8 @@
+filebeat.prospectors:
+- module: postgresql
+  log:
+    enabled: true
+    var.paths: ["/psql/log/postgres/*.log*"]
+
+output.logstash:
+  hosts: ["logstash:5044"]
