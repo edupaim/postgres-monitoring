@@ -1,3 +1,5 @@
+CREATE DATABASE testdb;
+
 CREATE TABLE test(
    id serial PRIMARY KEY,
    col1 VARCHAR (50) NOT NULL
@@ -9,3 +11,21 @@ INSERT INTO test (col1)
 SELECT g.id
 FROM generate_series(1, 10000000000000000) AS g (id);
 
+curl -s https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt > top-1m-pw.txt
+
+hydra -l postgres -P top-1m-pw.txt postgres://localhost:5432
+
+psql -h localhost -p 5432 -U postgres -d testdb
+
+export PGPASSWORD=password
+watch -n 0.5 "psql -h localhost -p 5432 -U postgres testdb -c \"INSERT INTO test (col1) VALUES ('value');\""
+
+Rep projeto
+https://github.com/edupaim/postgres-monitoring.git
+
+Pesquisa
+https://www.cybertec-postgresql.com/en/secure-postgresql-a-reminder-on-various-attack-surfaces/
+https://wiki.lnd.bz/display/LFTC/PostgreSQL+Exporter
+
+Dashboard
+https://grafana.com/dashboards/9628
