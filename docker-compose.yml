@@ -20,6 +20,17 @@ services:
       - ./log:/var/lib/postgresql/data/log
     networks:
       - app
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      - app
   filebeat-psql:
     image: docker.elastic.co/beats/filebeat:6.5.1
     user: root

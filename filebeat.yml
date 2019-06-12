@@ -1,3 +1,5 @@
+filebeat.config.modules.path: modules.d/*.yml
+
 filebeat.inputs:
 - type: log
   enabled: true
@@ -9,3 +11,7 @@ filebeat.inputs:
 
 output.logstash:
   hosts: ["logstash:5044"]
+
+setup.kibana:
+  host: kibana:5601
+

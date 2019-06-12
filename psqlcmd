@@ -29,3 +29,7 @@ https://wiki.lnd.bz/display/LFTC/PostgreSQL+Exporter
 
 Dashboard
 https://grafana.com/dashboards/9628
+
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+-- then hand out grants for those who really need them
+GRANT CREATE ON SCHEMA public TO app_owner_role;
